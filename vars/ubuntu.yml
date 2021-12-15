@@ -1,0 +1,5 @@
+---
+_libvirt_packages: 
+  - qemu-kvm
+  - libvirt-daemon-system
+    # - virt-manager
