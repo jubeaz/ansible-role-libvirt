@@ -1,4 +1,5 @@
 ---
+deployment_type: monolithic # modular
 libvirt_group_members:
 libvirt_key_path: /etc/libvirt/pki
 libvirt_key_file: key.pem
@@ -80,6 +81,7 @@ virtproxyd_cfg: {
     #timeout: 5
   }
 }
+
 
 virtlogd_cfg: {
   usocket: {

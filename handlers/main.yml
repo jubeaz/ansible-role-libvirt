@@ -1,4 +1,10 @@
 ---
+- name: restart libvirtd
+  service:
+    name: libvirtd
+    state: restarted
+    enabled: true
+
 - name: restart virtproxyd
   service:
     name: virtproxyd

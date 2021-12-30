@@ -1,9 +1,9 @@
 ---
 _libvirt_packages:
-  # - qemu
-  #- qemu-arch-extra #usermode
-  - qemu-headless-arch-extra
-  - qemu-headless
+  - qemu
+  - qemu-arch-extra #usermode
+    #- qemu-headless-arch-extra
+    #- qemu-headless
   - libvirt
   - bridge-utils
   - iptables-nft

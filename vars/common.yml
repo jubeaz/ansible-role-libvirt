@@ -4,17 +4,25 @@ _libvirt_group: libvirt
 _libvirt_socket_dir: /run/libvirt
 
 _libvirt_systemd_files:
+  libvirtd:
+    - libvirtd.service
+    - libvirtd-admin.socket
+    - libvirtd.socket
+    - libvirtd-ro.socket
+    - libvirtd-tls.socket
+    - libvirtd-tcp.socket
+
   virtproxyd:
     - virtproxyd.service
     - virtproxyd-admin.socket
-    - virtproxyd.socket 
+    - virtproxyd.socket
     - virtproxyd-ro.socket
     - virtproxyd-tls.socket
     - virtproxyd-tcp.socket
   virtlogd:
     - virtlogd.service
     - virtlogd-admin.socket
-    - virtlogd.socket 
+    - virtlogd.socket
   virtlockd:
     - virtlockd.service
     - virtlockd-admin.socket

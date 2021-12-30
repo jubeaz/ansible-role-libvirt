@@ -1,6 +1,27 @@
 ---
 - name: Configure Proxy Daemon
   block:
+    - name: Create libvirtd config file
+      template:
+        src: templates/libvirtd/libvirtd.conf.j2
+        dest: /etc/libvirt/libvirtd.conf
+        owner: root
+        group: root
+        mode: 0644
+
+    - name: Create virtproxyd systemd files
+      template:
+        src: "templates/libvirtd/{{ item }}.j2"
+        dest: "/etc/systemd/system/{{ item }}"
+        owner: root
+        group: root
+        mode: 0644
+      loop:  "{{ _libvirt_systemd_files.libvirtd }}"
+  notify: restart libvirtd
+  when: deployment_type != 'modular'
+
+- name: Configure Proxy Daemon
+  block:
     - name: Create virtproxyd config file
       template:
         src: templates/virtproxyd/virtproxyd.conf.j2
@@ -18,6 +39,7 @@
         mode: 0644
       loop:  "{{ _libvirt_systemd_files.virtproxyd }}"
   notify: restart virtproxyd
+  when: deployment_type == 'modular'
      
 - name: Configure Logging Daemon
   block:
@@ -64,3 +86,4 @@
   loop: "{{ _libvirt_systemd_files.drivers |dict2items }}"
   loop_control:
     loop_var: __libvirt_driver
+  when: deployment_type == 'modular'

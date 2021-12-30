@@ -23,12 +23,12 @@
     group: root
     mode: 0755
 
-- name: Stat CA cert 
+- name: Stat CA cert
   stat:
     path: "{{ libvirt_ca_path }}/{{ libvirt_ca_cert_file }}"
   register: __cacert
 
-- name: Generate CA 
+- name: Generate CA
   block:
     - name: create CA key
       openssl_privatekey:
@@ -61,12 +61,12 @@
         provider: selfsigned
   when: not __cacert.stat.exists
 
-- name: Stat cert 
+- name: Stat cert
   stat:
     path: "{{ libvirt_cert_path }}/{{ libvirt_cert_file }}"
   register: __cert
 
-- name: Generate cert 
+- name: Generate cert
   block:
     - name: create key
       openssl_privatekey:
