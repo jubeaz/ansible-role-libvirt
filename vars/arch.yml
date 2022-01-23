@@ -6,9 +6,10 @@ _libvirt_packages:
     #- qemu-headless
   - libvirt
   - bridge-utils
-  - iptables-nft
+    #  - iptables-nft
   - dnsmasq
   - openbsd-netcat
   - dmidecode
+  - python-lxml
     #- virt-manager
 

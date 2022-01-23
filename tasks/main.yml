@@ -11,70 +11,13 @@
 - include_tasks: arch.yml
   when: ansible_distribution == "Archlinux"
 
-    #- name: install bridge netdev
-    #  template:
-    #    src: br0.netdev.j2
-    #    dest: /etc/systemd/network/br0.netdev
-    #    owner: root
-    #    group: root
-    #    mode: 0644
-    #
-    #- name: bind interface to bridge
-    #  template:
-    #    src: 1-br0-bind.network.j2
-    #    dest: /etc/systemd/network/1-br0-bind.network
-    #    owner: root
-    #    group: root
-    #    mode: 0644
-    #
-    #- name: define bridge network
-    #  template:
-    #    src: 2-br0.network.j2
-    #    dest: /etc/systemd/network/2-br0.network
-    #    owner: root
-    #    group: root
-    #    mode: 0644
-
-    #- name: Create dist config dir
-    #  file:
-    #    path: /etc/libvirt/conf.dist
-    #    state: directory
-    #    owner: root
-    #    group: root
-    #    mode: 0755
-    #
-    #- name: List all config files
-    #  find:
-    #    path: /etc/libvirt
-    #    pattern: "*.conf"
-    #  register: __dist_conf_list
-    #
-    #- name: Compute config file basename 
-    #  set_fact:
-    #    _conf_list: "{{ _conf_list }} + ['{{ item.path | basename }}']"
-    #  loop: "{{ __dist_conf_list.files }}"
-    #
-    #- name: Copy config file to conf.dist
-    #  copy:
-    #    remote_src: true
-    #    src: "/etc/libvirt/{{ item }}"
-    #    dest: "/etc/libvirt/conf.dist/{{ item }}.dist"
-    #  loop: "{{ _conf_list }}"
-    #
-    #- name: Remove config file
-    #  file:
-    #    path: "/etc/libvirt/{{ item }}"
-    #    state: absent
-    #  loop: "{{ _conf_list }}"
-
-
-
 - name: Include tls
   include_tasks: tls.yml
   when: virtproxyd_cfg.x509 is defined
 
 - name: Include config
   include_tasks: config.yml
+  when: ansible_distribution != "Ubuntu"
 
 - name: add users to group
   user:
@@ -82,5 +25,14 @@
     state: present
     groups: "{{ _libvirt_group }}"
     append: yes
-  loop: "{{ libvirt_group_members }}" 
+  loop: "{{ libvirt_group_members }}"
 
+- include_tasks: dir_pool.yml
+  loop: "{{ libvirt_storage_pools }}"
+  loop_control:
+    loop_var: pool
+
+#- include_tasks: network.yml
+#  loop: "{{ libvirt_networks }}"
+#  loop_control:
+#    loop_var: network

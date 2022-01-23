@@ -1,15 +1,28 @@
 ---
-deployment_type: monolithic # modular
+libvirt_storage_pools:
+#  - name: 
+#    path:
+    
+libvirt_networks:
+#  - name:
+#    mode:
+#    ip:
+#    netmask:
+#    dhcp_start:
+#    dhcp_end:
+
+
 libvirt_group_members:
-libvirt_key_path: /etc/libvirt/pki
+deployment_type: modular #modular or monolithic
+libvirt_key_path: /etc/pki/libvirt/private
 libvirt_key_file: key.pem
-libvirt_cert_path: /etc/libvirt/pki
+libvirt_cert_path: /etc/pki/libvirt
 libvirt_cert_file: cert.pem
-libvirt_ca_path: /etc/libvirt/pki
+libvirt_ca_path: /etc/pki/CA
 libvirt_ca_cert_file: cacert.pem
 libvirt_ca_crl_file: crl.pem
 
-virtproxyd_cfg: {
+libvirtd_cfg: {
   usocket: {
     ro_perms: "0666", # 0666,
     rw_perms: "0660", # 0666,
@@ -17,26 +30,26 @@ virtproxyd_cfg: {
     group: "{{ _libvirt_group }}"
   },
   network: {
-    #tls_listen_stream: 16514, # 127.0.0.1:16514,
-    #tcp_listen_stream: 16509 # 127.0.0.1:16514
+    tls_listen_stream: 16514, # 127.0.0.1:16514,
+      #tcp_listen_stream: 16509 # 127.0.0.1:16514
   },
   auth: {
-    #auth_unix_ro: '"none"', # polkit,
-    #auth_unix_rw: '"none"', # polkit,
+    auth_unix_ro: '"none"', # polkit,
+    auth_unix_rw: '"none"', # polkit,
     #auth_tcp = '"sasl"',
-    #auth_tls: '"none"',
+    auth_tls: '"none"',
     # tcp_min_ssf = 112,
-    #access_drivers: '[ "none" ]'
+    access_drivers: '[ "none" ]'
   },
   x509: {
-    #key_file: '"{{ libvirt_key_path }}/{{ libvirt_key_file }}"',
-    #cert_file: '"{{ libvirt_cert_path }}/{{ libvirt_cert_file }}"',
-    #ca_file: '"{{ libvirt_ca_path }}/{{ libvirt_ca_cert_file }}"',
+    key_file: '"{{ libvirt_key_path }}/{{ libvirt_key_file }}"',
+    cert_file: '"{{ libvirt_cert_path }}/{{ libvirt_cert_file }}"',
+    ca_file: '"{{ libvirt_ca_path }}/{{ libvirt_ca_cert_file }}"',
     # crl_file: '"{{ libvirt_ca_path }}/{{ libvirt_ca_crl_file }}"'
   },
   auth_controls: {
-    #tls_no_sanity_certificate: 1,
-    #tls_no_verify_certificate: 1,
+    tls_no_sanity_certificate: 0,
+    tls_no_verify_certificate: 0,
     #    tls_allowed_dn_list: '["DN1", "DN2"]',
     #    tls_priority: '"NORMAL"',
     #    sasl_allowed_username_list: '["joe@EXAMPLE.COM", "fred@EXAMPLE.COM" ]'
@@ -56,10 +69,9 @@ virtproxyd_cfg: {
     #admin_max_client_requests: 5
   },
   log_controls: {
-    #log_level: 3,
-    #log_filters: '"1:qemu 1:libvirt 4:object 4:json 4:event 1:util"',
-    # log_outputs: '"3:journald"'
-    #log_outputs: '"3:file:/tmp/libvirt.log"'
+    log_level: 3,
+      #log_filters: '"1:qemu 1:libvirt 4:object 4:json 4:event 1:util"',
+    log_outputs: '"3:journald"'
   },
   autiting: {
     #audit_level = 2,
@@ -67,7 +79,7 @@ virtproxyd_cfg: {
   },
   uuid: {
     #host_uuid: '"00000000-0000-0000-0000-000000000000"',
-    #host_uuid_source: '"smbios"'
+    host_uuid_source: '"smbios"'
   },
   keepalive: {
     #keepalive_interval: 5,
@@ -82,6 +94,79 @@ virtproxyd_cfg: {
   }
 }
 
+virtproxyd_cfg: {
+  usocket: {
+    ro_perms: "0666", # 0666,
+    rw_perms: "0660", # 0666,
+    admin_perms: "0600", # 0600
+    group: "{{ _libvirt_group }}"
+  },
+  network: {
+    tls_listen_stream: 16514, # 127.0.0.1:16514,
+      #tcp_listen_stream: 16509 # 127.0.0.1:16514
+  },
+  auth: {
+    auth_unix_ro: '"none"', # polkit,
+    auth_unix_rw: '"none"', # polkit,
+    #auth_tcp = '"sasl"',
+    auth_tls: '"none"',
+    # tcp_min_ssf = 112,
+    access_drivers: '[ "none" ]'
+  },
+  x509: {
+    key_file: '"{{ libvirt_key_path }}/{{ libvirt_key_file }}"',
+    cert_file: '"{{ libvirt_cert_path }}/{{ libvirt_cert_file }}"',
+    ca_file: '"{{ libvirt_ca_path }}/{{ libvirt_ca_cert_file }}"',
+    # crl_file: '"{{ libvirt_ca_path }}/{{ libvirt_ca_crl_file }}"'
+  },
+  auth_controls: {
+    tls_no_sanity_certificate: 0,
+    tls_no_verify_certificate: 0,
+    #    tls_allowed_dn_list: '["DN1", "DN2"]',
+    #    tls_priority: '"NORMAL"',
+    #    sasl_allowed_username_list: '["joe@EXAMPLE.COM", "fred@EXAMPLE.COM" ]'
+  },
+  process_controls: {
+    #max_clients: 5000,
+    #max_queued_clients: 1000,
+    #max_anonymous_clients: 20,
+    #min_workers: 5,
+    #max_workers: 20,
+    #prio_workers: 5,
+    #max_client_requests: 5,
+    #admin_min_workers: 1,
+    #admin_max_workers: 5,
+    #admin_max_clients: 5,
+    #admin_max_queued_clients: 5,
+    #admin_max_client_requests: 5
+  },
+  log_controls: {
+    log_level: 1,
+      #log_filters: '"1:qemu 1:libvirt 4:object 4:json 4:event 1:util"',
+    log_outputs: '"3:journald"'
+      #log_outputs: '"3:journald 1:file:/tmp/libvirt.log"'
+
+  },
+  autiting: {
+    #audit_level = 2,
+    #audit_logging: 1
+  },
+  uuid: {
+    #host_uuid: '"00000000-0000-0000-0000-000000000000"',
+    host_uuid_source: '"smbios"'
+  },
+  keepalive: {
+    #keepalive_interval: 5,
+    #keepalive_count: 5,
+    #keepalive_required: 1,
+    #admin_keepalive_required: 1,
+    #admin_keepalive_interval: 5,
+    #admin_keepalive_count: 5
+  },
+  ovs: {
+    #timeout: 5
+  }
+}
 
 virtlogd_cfg: {
   usocket: {
@@ -90,9 +175,9 @@ virtlogd_cfg: {
     group: "{{ _libvirt_group }}"
   },
   log: {
-    #log_level: 3,
+    log_level: 3,
     #log_filters: '"1:qemu 1:libvirt 4:object 4:json 4:event 1:util"',
-    #log_outputs: '"3:syslog:virtlog"'
+    log_outputs: '"3:journald"'
     #max_clients: 1024,
     #admin_max_clients: 5,
     #max_siz: 2097152,
@@ -107,7 +192,8 @@ virtlockd_cfg: {
 # 0600
   },
   log: {
-    #log_level: 3,
+    log_level: 3,
+    log_outputs: '"3:journald"'
     #log_filters='"1:qemu 1:libvirt 4:object 4:json 4:event 1:util"',
     #log_outputs='"3:syslog:virtlockd"',
     #max_clients: 1024,
@@ -146,7 +232,8 @@ libvirt_drivers:
       #admin_max_client_requests: 5
     },
     log_controls: {
-      #log_level: 3
+      log_level: 3,
+      log_outputs: '"3:journald"'
       #log_filters='"1:qemu 1:libvirt 4:object 4:json 4:event 1:util"',
       #log_outputs='"3:syslog:virtqemud"'
     },
@@ -156,7 +243,7 @@ libvirt_drivers:
     },
     uuid: {
       #host_uuid: '"00000000-0000-0000-0000-000000000000"',
-      #host_uuid_source: '"smbios"'
+      host_uuid_source: '"smbios"'
     },
     keepalive: {
       #keepalive_interval: 5,
@@ -179,8 +266,8 @@ libvirt_drivers:
       group: "{{ _libvirt_group }}"
     },
     auth: {
-      #unix_ro: '"none"', # polkit,
-      #unix_rw: '"none"', # polkit,
+      unix_ro: '"none"', # polkit,
+      unix_rw: '"none"', # polkit,
       # access_drivers: '[ "polkit" ]'
     },
     auth_controls: {
@@ -201,7 +288,8 @@ libvirt_drivers:
       #admin_max_client_requests: 5
     },
     log_controls: {
-      #log_level: 3
+      log_level: 3,
+      log_outputs: '"3:journald"'
       #log_filters='"1:qemu 1:libvirt 4:object 4:json 4:event 1:util"',
       #log_outputs='"3:syslog:virtinterfaced"'
     },
@@ -211,7 +299,7 @@ libvirt_drivers:
     },
     uuid: {
       #host_uuid: '"00000000-0000-0000-0000-000000000000"',
-      #host_uuid_source: '"smbios"'
+      host_uuid_source: '"smbios"'
     },
     keepalive: {
       #keepalive_interval: 5,
@@ -234,8 +322,8 @@ libvirt_drivers:
       group: "{{ _libvirt_group }}"
     },
     auth: {
-      #unix_ro: '"none"', # polkit,
-      #unix_rw: '"none"', # polkit,
+      unix_ro: '"none"', # polkit,
+      unix_rw: '"none"', # polkit,
       # access_drivers: '[ "polkit" ]'
     },
     auth_controls: {
@@ -256,7 +344,8 @@ libvirt_drivers:
       #admin_max_client_requests: 5
     },
     log_controls: {
-      #log_level: 3
+      log_level: 3,
+      log_outputs: '"3:journald"'
       #log_filters='"1:qemu 1:libvirt 4:object 4:json 4:event 1:util"',
       #log_outputs='"3:syslog:virtnodedevd"'
     },
@@ -266,7 +355,7 @@ libvirt_drivers:
     },
     uuid: {
       #host_uuid: '"00000000-0000-0000-0000-000000000000"',
-      #host_uuid_source: '"smbios"'
+      host_uuid_source: '"smbios"'
     },
     keepalive: {
       #keepalive_interval: 5,
@@ -289,8 +378,8 @@ libvirt_drivers:
       group: "{{ _libvirt_group }}"
     },
     auth: {
-      #unix_ro: '"none"', # polkit,
-      #unix_rw: '"none"', # polkit,
+      unix_ro: '"none"', # polkit,
+      unix_rw: '"none"', # polkit,
       # access_drivers: '[ "polkit" ]'
     },
     auth_controls: {
@@ -311,7 +400,8 @@ libvirt_drivers:
       #admin_max_client_requests: 5
     },
     log_controls: {
-      #log_level: 3
+      log_level: 3,
+      log_outputs: '"3:journald"'
       #log_filters='"1:qemu 1:libvirt 4:object 4:json 4:event 1:util"',
       #log_outputs='"3:syslog:virtstoraged"'
     },
@@ -321,7 +411,7 @@ libvirt_drivers:
     },
     uuid: {
       #host_uuid: '"00000000-0000-0000-0000-000000000000"',
-      #host_uuid_source: '"smbios"'
+      host_uuid_source: '"smbios"'
     },
     keepalive: {
       #keepalive_interval: 5,
@@ -344,8 +434,8 @@ libvirt_drivers:
       group: "{{ _libvirt_group }}"
     },
     auth: {
-      #unix_ro: '"none"', # polkit,
-      #unix_rw: '"none"', # polkit,
+      unix_ro: '"none"', # polkit,
+      unix_rw: '"none"', # polkit,
       # access_drivers: '[ "polkit" ]'
     },
     auth_controls: {
@@ -366,7 +456,8 @@ libvirt_drivers:
       #admin_max_client_requests: 5
     },
     log_controls: {
-      #log_level: 3
+      log_level: 3,
+      log_outputs: '"3:journald"'
       #log_filters='"1:qemu 1:libvirt 4:object 4:json 4:event 1:util"',
       #log_outputs='"3:syslog:virtnetwordd"'
     },
@@ -376,7 +467,7 @@ libvirt_drivers:
     },
     uuid: {
       #host_uuid: '"00000000-0000-0000-0000-000000000000"',
-      #host_uuid_source: '"smbios"'
+      host_uuid_source: '"smbios"'
     },
     keepalive: {
       #keepalive_interval: 5,
@@ -399,8 +490,8 @@ libvirt_drivers:
       group: "{{ _libvirt_group }}"
     },
     auth: {
-      #unix_ro: '"none"', # polkit,
-      #unix_rw: '"none"', # polkit,
+      unix_ro: '"none"', # polkit,
+      unix_rw: '"none"', # polkit,
       # access_drivers: '[ "polkit" ]'
     },
     auth_controls: {
@@ -421,7 +512,8 @@ libvirt_drivers:
       #admin_max_client_requests: 5
     },
     log_controls: {
-      #log_level: 3
+      log_level: 3,
+      log_outputs: '"3:journald"'
       #log_filters='"1:qemu 1:libvirt 4:object 4:json 4:event 1:util"',
       #log_outputs='"3:syslog:virtnwfilterd"'
     },
@@ -431,7 +523,7 @@ libvirt_drivers:
     },
     uuid: {
       #host_uuid: '"00000000-0000-0000-0000-000000000000"',
-      #host_uuid_source: '"smbios"'
+      host_uuid_source: '"smbios"'
     },
     keepalive: {
       #keepalive_interval: 5,
@@ -454,8 +546,8 @@ libvirt_drivers:
       group: "{{ _libvirt_group }}"
     },
     auth: {
-      #unix_ro: '"none"', # polkit,
-      #unix_rw: '"none"', # polkit,
+      unix_ro: '"none"', # polkit,
+      unix_rw: '"none"', # polkit,
       # access_drivers: '[ "polkit" ]'
     },
     auth_controls: {
@@ -476,7 +568,8 @@ libvirt_drivers:
       #admin_max_client_requests: 5
     },
     log_controls: {
-      #log_level: 3
+      log_level: 3,
+      log_outputs: '"3:journald"'
       #log_filters='"1:qemu 1:libvirt 4:object 4:json 4:event 1:util"',
       #log_outputs='"3:syslog:virtsecretd"'
     },
@@ -486,7 +579,7 @@ libvirt_drivers:
     },
     uuid: {
       #host_uuid: '"00000000-0000-0000-0000-000000000000"',
-      #host_uuid_source: '"smbios"'
+      host_uuid_source: '"smbios"'
     },
     keepalive: {
       #keepalive_interval: 5,
