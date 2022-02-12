@@ -37,6 +37,7 @@
         state: present
         owner: root
         group: root
+        mode: 0600
 
     - name: create CSR
       openssl_csr:
@@ -46,12 +47,13 @@
         key_usage:
           - digitalSignature
           - keyEncipherment
-        basic_constraints_critical: true
-        basic_constraints:
-          - 'CA:TRUE'
+        extended_key_usage:
+          - serverAuth
         common_name: "Self Signed libvirt {{ inventory_hostname }}"
         subject_alt_name: "DNS:{{ inventory_hostname }}"
-        use_common_name_for_san: false
+        owner: root
+        group: root
+        mode: 0640
 
     - name: sign CSR
       openssl_certificate:
@@ -59,6 +61,9 @@
         csr_path: "{{ libvirt_ca_path }}/{{ libvirt_ca_cert_file }}.csr"
         privatekey_path: "{{ libvirt_ca_path }}/{{ libvirt_ca_cert_file }}.key"
         provider: selfsigned
+        owner: root
+        group: root
+        mode: 0640
   when: not __cacert.stat.exists
 
 - name: Stat cert
