@@ -11,5 +11,6 @@ _libvirt_packages:
   - openbsd-netcat
   - dmidecode
   - python-lxml
+  - libvirt-python
     #- virt-manager
 
